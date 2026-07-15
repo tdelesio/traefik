@@ -15,8 +15,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       # 🛡️ Let's Encrypt Automatic SSL certificate provisioner
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=tim@delesio.com" # Updated to match your domain
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
