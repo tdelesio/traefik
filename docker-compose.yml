@@ -1,1 +1,44 @@
-# traefik
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: always
+    command:
+      - "--api.insecure=false"
+      - "--api.dashboard=true" # Enable the built-in Traefik Web Dashboard
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false" # Security: don't route containers unless explicitly asked
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # 🔄 Automatically redirect standard HTTP (80) to secure HTTPS (443)
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # 🛡️ Let's Encrypt Automatic SSL certificate provisioner
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=tim@example.com" # 👈 Change to your email
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" # Listen to local docker socket
+      - "./letsencrypt:/letsencrypt"                  # Persist SSL certificates
+    networks:
+      - traefik-public
+    labels:
+      # 📈 OPTIONAL: Secure the Traefik Web Dashboard at traefik.yourdomain.com
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.yourdomain.com`)"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls=true"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=myresolver"
+      # 🔒 Basic Auth for the Dashboard dashboard (User: admin / Password: password)
+      - "traefik.http.routers.traefik-dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$qp37oz7m$$/o92qN.8t59/K9r170tXW."
+
+networks:
+  traefik-public:
+    external: true # Tells Compose this is our shared external router network# traefik
