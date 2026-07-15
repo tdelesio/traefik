@@ -276,7 +276,7 @@ services:
       - /mnt/storage/dockerdata/ubooquity:/config
       - /mnt/storage/media/books/comics:/data
     ports:
-      - 8080:8080
+      - 8082:8080
     restart: unless-stopped
     environment:
       - PUID=1000
