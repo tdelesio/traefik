@@ -221,29 +221,29 @@ services:
       - "traefik.http.services.ubooquity.loadbalancer.server.port=2202"
       - "traefik.docker.network=traefik_proxy"
 
-  prowlarr:
-    image: cr.hotio.dev/hotio/prowlarr
-    container_name: prowlarr-v2
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    ports:
-      - 9696:9696
-    volumes:
-      - /mnt/storage/dockerdata/prowlarr/config:/config
-    restart: unless-stopped
-    networks:
-      - traefik_proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prowlarr.rule=Host(`index.${DOMAINNAME}`)"
-      - "traefik.http.routers.prowlarr.entrypoints=websecure"
-      - "traefik.http.routers.prowlarr.tls=true"
-      - "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
-      - "traefik.http.routers.prowlarr.middlewares=secure-headers@docker"
-      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
-      - "traefik.docker.network=traefik_proxy"
+#   prowlarr:
+#     image: cr.hotio.dev/hotio/prowlarr
+#     container_name: prowlarr-v2
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=${TZ}
+#     ports:
+#       - 9696:9696
+#     volumes:
+#       - /mnt/storage/dockerdata/prowlarr/config:/config
+#     restart: unless-stopped
+#     networks:
+#       - traefik_proxy
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.http.routers.prowlarr.rule=Host(`index.${DOMAINNAME}`)"
+#       - "traefik.http.routers.prowlarr.entrypoints=websecure"
+#       - "traefik.http.routers.prowlarr.tls=true"
+#       - "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
+#       - "traefik.http.routers.prowlarr.middlewares=secure-headers@docker"
+#       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+#       - "traefik.docker.network=traefik_proxy"
 
   overseerr:
     image: sctx/overseerr:latest
