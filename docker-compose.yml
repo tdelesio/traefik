@@ -17,7 +17,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       # 🛡️ Let's Encrypt Automatic SSL certificate provisioner
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=tim@example.com" # 👈 Change to your email
+      - "--certificatesresolvers.myresolver.acme.email=tim@delesio.com" # Updated to match your domain
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
@@ -26,19 +26,30 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro" # Listen to local docker socket
       - "./letsencrypt:/letsencrypt"                  # Persist SSL certificates
     networks:
-      - traefik-public
+      - traefik_proxy
     labels:
-      # 📈 OPTIONAL: Secure the Traefik Web Dashboard at traefik.yourdomain.com
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.yourdomain.com`)"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAINNAME:-delesio.com}`)"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
       - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
       - "traefik.http.routers.traefik-dashboard.tls=true"
       - "traefik.http.routers.traefik-dashboard.tls.certresolver=myresolver"
-      # 🔒 Basic Auth for the Dashboard dashboard (User: admin / Password: password)
+      # 🔒 Basic Auth for the Dashboard (User: admin / Password: password)
       - "traefik.http.routers.traefik-dashboard.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$qp37oz7m$$/o92qN.8t59/K9r170tXW."
+      
+      # 🛡️ Shared Reusable Security Headers Middleware (Referenced by other services as secure-headers@docker)
+      - "traefik.http.middlewares.secure-headers.headers.sslRedirect=true"
+      - "traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.secure-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.secure-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.secure-headers.headers.sslHost=${DOMAINNAME:-delesio.com}"
+      - "traefik.http.middlewares.secure-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.secure-headers.headers.stsPreload=true"
+      - "traefik.http.middlewares.secure-headers.headers.frameDeny=false"
 
 networks:
-  traefik-public:
-    external: true # Tells Compose this is our shared external router network# traefik
+  traefik_proxy:
+    external: true # Shared external proxy network on host
+

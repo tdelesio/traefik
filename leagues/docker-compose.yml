@@ -52,10 +52,23 @@ services:
         condition: service_healthy
     networks:
       - leagues-network
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.leagues.rule=Host(`leagues.${DOMAINNAME:-delesio.com}`)"
+      - "traefik.http.routers.leagues.entrypoints=websecure"
+      - "traefik.http.routers.leagues.tls=true"
+      - "traefik.http.routers.leagues.tls.certresolver=myresolver"
+      - "traefik.http.routers.leagues.middlewares=secure-headers@docker"
+      - "traefik.http.services.leagues.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik_proxy"
 
 networks:
   leagues-network:
     driver: bridge
+  traefik_proxy:
+    external: true
 
 volumes:
   mysql-data:
+

@@ -18,19 +18,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=sabnzbd"
-      - "traefik.frontend.rule=Host:downloads.${DOMAINNAME}"
-      - "traefik.port=8080"
+      - "traefik.http.routers.sabnzbd.rule=Host(`downloads.${DOMAINNAME}`)"
+      - "traefik.http.routers.sabnzbd.entrypoints=websecure"
+      - "traefik.http.routers.sabnzbd.tls=true"
+      - "traefik.http.routers.sabnzbd.tls.certresolver=myresolver"
+      - "traefik.http.routers.sabnzbd.middlewares=secure-headers@docker"
+      - "traefik.http.services.sabnzbd.loadbalancer.server.port=8080"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -55,19 +49,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=jellyfin"
-      - "traefik.frontend.rule=Host:jellyfin.${DOMAINNAME}"
-      - "traefik.port=8096"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAINNAME}`)"
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.tls=true"
+      - "traefik.http.routers.jellyfin.tls.certresolver=myresolver"
+      - "traefik.http.routers.jellyfin.middlewares=secure-headers@docker"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   plex:
     image: linuxserver/plex
@@ -101,19 +89,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=tautulli"
-      - "traefik.frontend.rule=Host:plexstats.${DOMAINNAME}"
-      - "traefik.port=8181"
+      - "traefik.http.routers.tautulli.rule=Host(`plexstats.${DOMAINNAME}`)"
+      - "traefik.http.routers.tautulli.entrypoints=websecure"
+      - "traefik.http.routers.tautulli.tls=true"
+      - "traefik.http.routers.tautulli.tls.certresolver=myresolver"
+      - "traefik.http.routers.tautulli.middlewares=secure-headers@docker"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   homeassistant:
     container_name: homeassistant
@@ -127,19 +109,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=homeassistant"
-      - "traefik.frontend.rule=Host:ha.${DOMAINNAME}"
-      - "traefik.port=8123"
+      - "traefik.http.routers.homeassistant.rule=Host(`ha.${DOMAINNAME}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=websecure"
+      - "traefik.http.routers.homeassistant.tls=true"
+      - "traefik.http.routers.homeassistant.tls.certresolver=myresolver"
+      - "traefik.http.routers.homeassistant.middlewares=secure-headers@docker"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   sonarr:
     image: linuxserver/sonarr
@@ -157,19 +133,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=sonarr"
-      - "traefik.frontend.rule=Host:tv.${DOMAINNAME}"
-      - "traefik.port=8989"
+      - "traefik.http.routers.sonarr.rule=Host(`tv.${DOMAINNAME}`)"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.http.routers.sonarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.sonarr.middlewares=secure-headers@docker"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   radarr:
     image: linuxserver/radarr
@@ -190,19 +160,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=radarr"
-      - "traefik.frontend.rule=Host:movies.${DOMAINNAME}"
-      - "traefik.port=7878"
+      - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAINNAME}`)"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.http.routers.radarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.radarr.middlewares=secure-headers@docker"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   readarr:
     image: hotio/readarr:nightly
@@ -224,19 +188,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=readarr"
-      - "traefik.frontend.rule=Host:books.${DOMAINNAME}"
-      - "traefik.port=8787"
+      - "traefik.http.routers.readarr.rule=Host(`books.${DOMAINNAME}`)"
+      - "traefik.http.routers.readarr.entrypoints=websecure"
+      - "traefik.http.routers.readarr.tls=true"
+      - "traefik.http.routers.readarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.readarr.middlewares=secure-headers@docker"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   ubooquity:
     image: ghcr.io/linuxserver/ubooquity
@@ -257,19 +215,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=ubooquity"
-      - "traefik.frontend.rule=Host:opds.${DOMAINNAME}"
-      - "traefik.port=2202"
+      - "traefik.http.routers.ubooquity.rule=Host(`opds.${DOMAINNAME}`)"
+      - "traefik.http.routers.ubooquity.entrypoints=websecure"
+      - "traefik.http.routers.ubooquity.tls=true"
+      - "traefik.http.routers.ubooquity.tls.certresolver=myresolver"
+      - "traefik.http.routers.ubooquity.middlewares=secure-headers@docker"
+      - "traefik.http.services.ubooquity.loadbalancer.server.port=2202"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   prowlarr:
     image: cr.hotio.dev/hotio/prowlarr
@@ -287,19 +239,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=prowlarr"
-      - "traefik.frontend.rule=Host:index.${DOMAINNAME}"
-      - "traefik.port=9696"
+      - "traefik.http.routers.prowlarr.rule=Host(`index.${DOMAINNAME}`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.prowlarr.middlewares=secure-headers@docker"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   overseerr:
     image: sctx/overseerr:latest
@@ -317,19 +263,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=overseerr"
-      - "traefik.frontend.rule=Host:request.${DOMAINNAME}"
-      - "traefik.port=5055"
+      - "traefik.http.routers.overseerr.rule=Host(`request.${DOMAINNAME}`)"
+      - "traefik.http.routers.overseerr.entrypoints=websecure"
+      - "traefik.http.routers.overseerr.tls=true"
+      - "traefik.http.routers.overseerr.tls.certresolver=myresolver"
+      - "traefik.http.routers.overseerr.middlewares=secure-headers@docker"
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
   komga:
     image: gotson/komga
@@ -348,19 +288,13 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=komga"
-      - "traefik.frontend.rule=Host:comics.${DOMAINNAME}"
-      - "traefik.port=8080"
+      - "traefik.http.routers.komga.rule=Host(`comics.${DOMAINNAME}`)"
+      - "traefik.http.routers.komga.entrypoints=websecure"
+      - "traefik.http.routers.komga.tls=true"
+      - "traefik.http.routers.komga.tls.certresolver=myresolver"
+      - "traefik.http.routers.komga.middlewares=secure-headers@docker"
+      - "traefik.http.services.komga.loadbalancer.server.port=8080"
       - "traefik.docker.network=traefik_proxy"
-      - "traefik.frontend.headers.SSLRedirect=true"
-      - "traefik.frontend.headers.STSSeconds=315360000"
-      - "traefik.frontend.headers.browserXSSFilter=true"
-      - "traefik.frontend.headers.contentTypeNosniff=true"
-      - "traefik.frontend.headers.forceSTSHeader=true"
-      - "traefik.frontend.headers.SSLHost=delesio.com"
-      - "traefik.frontend.headers.STSIncludeSubdomains=true"
-      - "traefik.frontend.headers.STSPreload=true"
-      - "traefik.frontend.headers.frameDeny=false"
 
 volumes:
   ssl:
