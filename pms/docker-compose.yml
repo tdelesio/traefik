@@ -3,7 +3,7 @@ version: "3.7"
 services:
   sabnzbd:
     image: linuxserver/sabnzbd
-    container_name: sabnzbd
+    container_name: sabnzbd-v2
     volumes:
       - /mnt/storage/dockerdata/sabnzbd:/config
       - /mnt/storage/download:/data/usenet
@@ -28,7 +28,7 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin
-    container_name: jellyfin
+    container_name: jellyfin-v2
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -59,7 +59,7 @@ services:
 
   plex:
     image: linuxserver/plex
-    container_name: plex
+    container_name: plex-v2
     volumes:
       - /mnt/storage/dockerdata/plex:/config
       - /mnt/storage/media:/data/media
@@ -75,7 +75,7 @@ services:
 
   tautulli:
     image: ghcr.io/tautulli/tautulli
-    container_name: tautulli
+    container_name: tautulli-v2
     restart: unless-stopped
     volumes:
       - /mnt/storage/dockerdata/plex:/config
@@ -98,7 +98,7 @@ services:
       - "traefik.docker.network=traefik_proxy"
 
   homeassistant:
-    container_name: homeassistant
+    container_name: homeassistant-v2
     image: homeassistant/home-assistant:stable
     volumes:
       - /mnt/storage/dockerdata/homeassistant:/config
@@ -119,7 +119,7 @@ services:
 
   sonarr:
     image: linuxserver/sonarr
-    container_name: sonarr
+    container_name: sonarr-v2
     volumes:
       - /mnt/storage/dockerdata/sonarr:/config
       - /mnt/storage/media/tv:/data/media/tv
@@ -143,7 +143,7 @@ services:
 
   radarr:
     image: linuxserver/radarr
-    container_name: radarr
+    container_name: radarr-v2
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -170,7 +170,7 @@ services:
 
   readarr:
     image: hotio/readarr:nightly
-    container_name: readarr
+    container_name: readarr-v2
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -198,7 +198,7 @@ services:
 
   ubooquity:
     image: ghcr.io/linuxserver/ubooquity
-    container_name: ubooquity
+    container_name: ubooquity-v2
     environment:
       - PUID=1000
       - PGID=1000
@@ -225,7 +225,7 @@ services:
 
   prowlarr:
     image: cr.hotio.dev/hotio/prowlarr
-    container_name: prowlarr
+    container_name: prowlarr-v2
     environment:
       - PUID=1000
       - PGID=1000
@@ -249,7 +249,7 @@ services:
 
   overseerr:
     image: sctx/overseerr:latest
-    container_name: overseerr
+    container_name: overseerr-v2
     environment:
       - PUID=1000
       - PGID=1000
@@ -273,7 +273,7 @@ services:
 
   komga:
     image: gotson/komga
-    container_name: komga
+    container_name: komga-v2
     volumes:
       - /mnt/storage/dockerdata/ubooquity:/config
       - /mnt/storage/media/books/comics:/data

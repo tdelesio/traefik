@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mysql:
     image: mysql:8.0
-    container_name: leagues-mysql
+    container_name: leagues-mysql-v2
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: leagues_mono
@@ -23,7 +23,7 @@ services:
 
   redis:
     image: redis:7.0-alpine
-    container_name: leagues-redis
+    container_name: leagues-redis-v2
     ports:
       - "6379:6379"
     healthcheck:
@@ -36,7 +36,7 @@ services:
 
   app:
     image: tdelesio/leagues-app:0.0.1
-    container_name: leagues-app
+    container_name: leagues-app-v2
     ports:
       - "8080:8080"
     environment:
