@@ -4,6 +4,7 @@ services:
     container_name: traefik-v2
     restart: always
     command:
+      - "--log.level=DEBUG" # 🐛 Enable debug logging for full visibility
       - "--api.insecure=false"
       - "--api.dashboard=true" # Enable the built-in Traefik Web Dashboard
       - "--providers.docker=true"
