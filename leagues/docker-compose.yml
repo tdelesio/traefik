@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: leagues-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: leagues_mono
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - leagues-network
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: leagues-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - leagues-network
+
+  app:
+    image: tdelesio/leagues-app:0.0.1
+    container_name: leagues-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/leagues_mono?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: dbuser
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - leagues-network
+
+networks:
+  leagues-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
