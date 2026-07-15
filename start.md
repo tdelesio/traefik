@@ -52,27 +52,43 @@ TZ=America/New_York
 ## Step 5: Start the Stacks (In Order)
 
 ### 1. Launch Traefik (Root Directory)
-Launch your reverse proxy first. This handles domain routing and SSL generation.
+Launch your reverse proxy first.Once this is done, you can start the Traefik container in the root directory:
 ```bash
+# For Docker Compose V2 (plugin):
 docker compose up -d
+
+# For Docker Compose V1 (legacy):
+docker-compose up -d
 ```
 You can monitor the logs to verify it starts up without errors:
 ```bash
 docker compose logs -f traefik
+# OR
+docker-compose logs -f traefik
 ```
 
 ### 2. Launch Media Server Stacks (PMS)
 Once Traefik is running, spin up your media stack:
 ```bash
 cd pms
+
+# For Docker Compose V2:
 docker compose up -d
+
+# For Docker Compose V1:
+docker-compose up -d
 ```
 
 ### 3. Launch Leagues Mono App
 Spin up your Leagues application and database/redis services:
 ```bash
 cd ../leagues
+
+# For Docker Compose V2:
 docker compose up -d
+
+# For Docker Compose V1:
+docker-compose up -d
 ```
 
 ---
