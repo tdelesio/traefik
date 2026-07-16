@@ -35,7 +35,7 @@ services:
     restart: always
     networks:
       - bass-internal
-      - traefik-public # Connect to the external Traefik network
+      - traefik_proxy # Connect to the external Traefik proxy network
     labels:
       - "traefik.enable=true"
       # Route requests starting with /api to the backend. Traefik matches longer/more specific rules first.
@@ -43,9 +43,11 @@ services:
       - "traefik.http.routers.bass-backend.entrypoints=websecure"
       - "traefik.http.routers.bass-backend.tls=true"
       - "traefik.http.routers.bass-backend.tls.certresolver=myresolver"
+      # Apply the shared security headers middleware defined in the root Traefik container
+      - "traefik.http.routers.bass-backend.middlewares=secure-headers@docker"
       - "traefik.http.services.bass-backend.loadbalancer.server.port=3001"
-      # Ensure Traefik connects to this container via the shared public network
-      - "traefik.docker.network=traefik-public"
+      # Ensure Traefik connects to this container via the shared proxy network
+      - "traefik.docker.network=traefik_proxy"
 
   frontend:
     build:
@@ -60,7 +62,7 @@ services:
     restart: always
     networks:
       - bass-internal
-      - traefik-public # Connect to the external Traefik network
+      - traefik_proxy # Connect to the external Traefik proxy network
     labels:
       - "traefik.enable=true"
       # Route all other web traffic to the frontend
@@ -68,9 +70,11 @@ services:
       - "traefik.http.routers.bass-frontend.entrypoints=websecure"
       - "traefik.http.routers.bass-frontend.tls=true"
       - "traefik.http.routers.bass-frontend.tls.certresolver=myresolver"
+      # Apply the shared security headers middleware defined in the root Traefik container
+      - "traefik.http.routers.bass-frontend.middlewares=secure-headers@docker"
       - "traefik.http.services.bass-frontend.loadbalancer.server.port=80"
-      # Ensure Traefik connects to this container via the shared public network
-      - "traefik.docker.network=traefik-public"
+      # Ensure Traefik connects to this container via the shared proxy network
+      - "traefik.docker.network=traefik_proxy"
 
 volumes:
   pgdata_prod:
@@ -79,7 +83,6 @@ networks:
   # Internal bridge network for secure service-to-service and service-to-db communication
   bass-internal:
     driver: bridge
-  # External network used by Traefik (defined in root docker-compose.yml as 'traefik-public')
-  # If your Traefik setup uses 'traefik_proxy' instead, rename 'traefik-public' to 'traefik_proxy' here and in the services above.
-  traefik-public:
+  # External network used by Traefik (defined in root docker-compose.yml as 'traefik_proxy')
+  traefik_proxy:
     external: true
