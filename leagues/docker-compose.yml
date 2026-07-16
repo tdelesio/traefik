@@ -33,7 +33,7 @@ services:
       - leagues-network
 
   app:
-    image: tdelesio/leagues-app:0.0.1
+    image: tdelesio/leagues-app:latest
     container_name: leagues-app-v2
     ports:
       - "8083:8080"
