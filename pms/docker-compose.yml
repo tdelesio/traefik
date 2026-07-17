@@ -177,8 +177,6 @@ services:
     volumes:
       - /mnt/storage/dockerdata/readarr:/config
       - /mnt/storage/media/books/ebooks:/data/media/books
-      - /mnt/storage/media/books/comics:/data/media/comics
-      - /mnt/storage/media/books/comics:/data/media/audio
       - /mnt/storage/download:/data/usenet
     ports:
       - 8787:8787
@@ -193,6 +191,33 @@ services:
       - "traefik.http.routers.readarr.tls.certresolver=myresolver"
       - "traefik.http.routers.readarr.middlewares=secure-headers@docker"
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+      - "traefik.docker.network=traefik_proxy"
+
+  speakarr:
+    image: hotio/readarr:nightly
+    container_name: speakarr-v2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - UMASK_SET=002
+    volumes:
+      - /mnt/storage/dockerdata/speakarr:/config
+      - /mnt/storage/media/books/comics:/data/media/audio
+      - /mnt/storage/download:/data/usenet
+    ports:
+      - 8788:8787
+    restart: unless-stopped
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speakarr.rule=Host(`audiobooks.${DOMAINNAME}`)"
+      - "traefik.http.routers.speakarr.entrypoints=websecure"
+      - "traefik.http.routers.speakarr.tls=true"
+      - "traefik.http.routers.speakarr.tls.certresolver=myresolver"
+      - "traefik.http.routers.speakarr.middlewares=secure-headers@docker"
+      - "traefik.http.services.speakarr.loadbalancer.server.port=8787"
       - "traefik.docker.network=traefik_proxy"
 
   ubooquity:
