@@ -178,6 +178,7 @@ services:
       - /mnt/storage/dockerdata/readarr:/config
       - /mnt/storage/media/books/ebooks:/data/media/books
       - /mnt/storage/media/books/comics:/data/media/comics
+      - /mnt/storage/media/books/comics:/data/media/audio
       - /mnt/storage/download:/data/usenet
     ports:
       - 8787:8787
