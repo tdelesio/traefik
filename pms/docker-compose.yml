@@ -203,7 +203,7 @@ services:
       - UMASK_SET=002
     volumes:
       - /mnt/storage/dockerdata/speakarr:/config
-      - /mnt/storage/media/books/comics:/data/media/audio
+      - /mnt/storage/media/books/audio:/data/media/audio
       - /mnt/storage/download:/data/usenet
     ports:
       - 8788:8787
