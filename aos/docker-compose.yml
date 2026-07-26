@@ -4,6 +4,27 @@ services:
   # ==========================================================================
   # ⚔️ WARHAMMER LIST BUILDER & GAME TRACKER SERVICES
   # ==========================================================================
+  warhammer_db:
+    image: postgres:16-alpine
+    container_name: warhammer_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: warhammer_list_builder
+    # Exposed host port kept in case you want to connect client apps (e.g. pgAdmin, TablePlus) on host
+    ports:
+      - "5439:5432"
+    volumes:
+      - warhammer_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aos-internal
+
   warhammer_web:
     image: tdelesio/aos-list-builder:latest  # Pulls directly from Docker Hub
     container_name: warhammer_web
@@ -12,17 +33,23 @@ services:
       - PORT=8080
       - DATABASE_URL=postgresql://postgres:postgres@warhammer_db:5432/warhammer_list_builder
       - NODE_ENV=production                  # Set to production
-    # Removed build block and local dev volume mounts (source files are embedded inside the image!)
     depends_on:
       warhammer_db:
         condition: service_healthy
+    # 🏷️ Traefik Labels: Instructs Traefik on how to route incoming HTTPS traffic
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.warhammer.rule=Host(`warhammer.localhost`)"
-      - "traefik.http.routers.warhammer.entrypoints=web"
+      # Route domain matching warhammer.yourdomain.com
+      - "traefik.http.routers.warhammer.rule=Host(`warhammer.${DOMAINNAME:-delesio.com}`)"
+      - "traefik.http.routers.warhammer.entrypoints=websecure"
+      - "traefik.http.routers.warhammer.tls=true"
+      - "traefik.http.routers.warhammer.tls.certresolver=myresolver"
+      - "traefik.http.routers.warhammer.middlewares=secure-headers@docker"
       - "traefik.http.services.warhammer.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik_proxy"
     networks:
-      - traefik_net
+      - aos-internal
+      - traefik_proxy
 
 # Shared Volume and Network configs
 volumes:
