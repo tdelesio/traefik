@@ -2,26 +2,6 @@ version: '3.8'
 
 services:
   # ==========================================================================
-  # 🚦 TRAEFIK REVERSE PROXY SERVICE
-  # ==========================================================================
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik_proxy
-    restart: always
-    command:
-      - "--api.insecure=true"            # Enables Traefik Dashboard (port 8080)
-      - "--providers.docker=true"         # Tells Traefik to look for Docker containers
-      - "--providers.docker.exposedbydefault=false" # Only route containers with traefik.enable=true
-      - "--entrypoints.web.address=:80"   # Create HTTP entrypoint on Port 80
-    ports:
-      - "80:80"                           # Standard Web Traffic
-      - "8080:8080"                       # Traefik Dashboard UI
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro # Allows Traefik to read Docker container events
-    networks:
-      - traefik_net
-
-  # ==========================================================================
   # ⚔️ WARHAMMER LIST BUILDER & GAME TRACKER SERVICES
   # ==========================================================================
   warhammer_db:
@@ -43,7 +23,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - traefik_net
+      - aos-internal
 
   warhammer_web:
     build:
@@ -54,7 +34,7 @@ services:
     environment:
       - PORT=8080
       - DATABASE_URL=postgresql://postgres:postgres@warhammer_db:5432/warhammer_list_builder
-      - NODE_ENV=development
+      - NODE_ENV=production
     volumes:
       - ./warhammer_list_builder:/app     # Hot-reloading syncs directly inside subfolder
       - /app/node_modules
@@ -62,32 +42,29 @@ services:
     depends_on:
       warhammer_db:
         condition: service_healthy
-    # 🏷️ Traefik Labels: Instructs Traefik on how to route incoming HTTP traffic
+    # 🏷️ Traefik Labels: Instructs Traefik on how to route incoming HTTPS traffic
     labels:
       - "traefik.enable=true"
       # Change "warhammer.localhost" to whatever local/production domain you want to match
-      - "traefik.http.routers.warhammer.rule=Host(`warhammer.localhost`)"
-      - "traefik.http.routers.warhammer.entrypoints=web"
+      - "traefik.http.routers.warhammer.rule=Host(`warhammer.${DOMAINNAME:-delesio.com}`)"
+      - "traefik.http.routers.warhammer.entrypoints=websecure"
+      - "traefik.http.routers.warhammer.tls=true"
+      - "traefik.http.routers.warhammer.tls.certresolver=myresolver"
+      - "traefik.http.routers.warhammer.middlewares=secure-headers@docker"
       - "traefik.http.services.warhammer.loadbalancer.server.port=8080"
+      - "traefik.docker.network=traefik_proxy"
     networks:
-      - traefik_net
-
-  # ==========================================================================
-  # 👥 ADD YOUR OTHER PROJECTS HERE!
-  # ==========================================================================
-  # other_project_web:
-  #   build: ./other_project_folder
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.other.rule=Host(`other-project.localhost`)"
-  #     - "traefik.http.services.other.loadbalancer.server.port=3000"
-  #   networks:
-  #     - traefik_net
+      - aos-internal
+      - traefik_proxy
 
 # Shared Volume and Network configs
 volumes:
   warhammer_pgdata:
 
 networks:
-  traefik_net:
-    name: traefik_net
+  # Private network for secure web-to-database communication
+  aos-internal:
+    driver: bridge
+  # External network used by your central Traefik container
+  traefik_proxy:
+    external: true
