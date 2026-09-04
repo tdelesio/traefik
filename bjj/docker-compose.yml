@@ -48,3 +48,8 @@ services:
 
 volumes:
   postgres_data:
+
+# ⬇️ ADD THIS MISSING BLOCK AT THE BOTTOM ⬇️
+networks:
+  traefik:
+    external: true
