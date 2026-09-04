@@ -36,6 +36,15 @@ services:
     restart: always
     depends_on:
       - api
+    labels:
+      - "traefik.enable=true"
+      # Change bjj.local to your actual production domain name
+      - "traefik.http.routers.bjj-playbook.rule=Host(`bjj.local`)"
+      - "traefik.http.routers.bjj-playbook.entrypoints=web"
+      - "traefik.http.services.bjj-playbook.loadbalancer.server.port=80"
+    networks:
+      - default
+      - traefik
 
 volumes:
   postgres_data:
