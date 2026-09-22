@@ -45,7 +45,7 @@ services:
       - traefik_proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.eartraining.rule=Host(`eartraining.${DOMAINNAME:-delesio.com}`)"
+      - "traefik.http.routers.eartraining.rule=Host(`cadence.${DOMAINNAME:-delesio.com}`)"
       - "traefik.http.routers.eartraining.entrypoints=websecure"
       - "traefik.http.routers.eartraining.tls=true"
       - "traefik.http.routers.eartraining.tls.certresolver=myresolver"
