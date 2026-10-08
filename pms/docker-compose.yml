@@ -176,7 +176,7 @@ services:
       - UMASK_SET=002
     volumes:
       - /mnt/storage/dockerdata/bazarr:/config
-      - /mnt/storage/media/:/data
+      - /mnt/storage/media/subtitles:/data
     ports:
       - 6767:6767
     restart: unless-stopped
